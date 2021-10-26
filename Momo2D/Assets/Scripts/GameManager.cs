@@ -18,6 +18,6 @@ public class GameManager : MonoBehaviour
     }
     private void LinkManagerEvents()
     {
-        SnakeManager.OnNewPartCollect += UIManager.UpdateScore;
+        SnakeManager.OnUpdateBodyPart += UIManager.UpdateScore;
     }
 }

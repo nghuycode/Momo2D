@@ -10,20 +10,26 @@ public class SnakeManager : MonoBehaviour
     [SerializeField] private GameObject _bodyPartPrefab;
     [SerializeField] private List<Node> _bodyPartList = new List<Node>();
 
-    public UnityAction<int> OnNewPartCollect;
-    public bool IsBot;
+    public UnityAction<int> OnUpdateBodyPart;
+    public UnityAction<int, List<Vector3>> OnDie;
+    public bool IsBot, IsDying;
     public Transform Player;
 
     private void Awake() 
     {
+        DetectCollider detectCollider = this.GetComponentInChildren<DetectCollider>();
         if (!IsBot)
         {
-            DetectCollider detectCollider = this.GetComponentInChildren<DetectCollider>();
             detectCollider.OnCollideFood += SnakeNewPart;
+            detectCollider.OnCollideBot += Die;
+            detectCollider.OnCollideWall += Die;
         }
         else
         {
             Player = GameObject.Find("Player").transform.GetChild(0);
+            detectCollider.OnCollidePlayer += Die;
+            detectCollider.OnCollideFood += SnakeNewPartBot;
+            OnDie += FoodGenerator.Insstance.SpawnFood;
         }
     }
     private void FixedUpdate() 
@@ -65,32 +71,51 @@ public class SnakeManager : MonoBehaviour
     }
     private void SnakeNewPart(Color color) 
     {
-        Debug.Log("new");
         Node lastNode = _bodyPartList[_bodyPartList.Count - 1].GetComponent<Node>();
         GameObject newNode = Instantiate(_bodyPartPrefab, lastNode.NodePointList[0].Position, lastNode.NodePointList[0].Rotation, transform);
         newNode.GetComponent<Node>().ClearNodePointList();
         newNode.GetComponent<SpriteRenderer>().color = color;
+        newNode.tag = "Player";
         _bodyPartList.Add(newNode.GetComponent<Node>());
-        OnNewPartCollect?.Invoke(_bodyPartList.Count - 1);
+        OnUpdateBodyPart?.Invoke(_bodyPartList.Count - 1);
+    }
+    private void Die()
+    {
+        if (!IsDying)
+            StartCoroutine(CRDieAnimation());
+    }
+    private IEnumerator CRDieAnimation()
+    {
+        IsDying = true;
+        int partCount = _bodyPartList.Count;
+        List<Vector3> partPosList = new List<Vector3>();
+        for (int i = 0; i < partCount; ++i)
+            partPosList.Add(_bodyPartList[i].transform.position);
+        if (_bodyPartList.Count > 1)
+        {
+            for (int i = _bodyPartList.Count - 1; i > 0; --i)
+            {
+                GameObject node = _bodyPartList[_bodyPartList.Count - 1].gameObject;
+                _bodyPartList.RemoveAt(_bodyPartList.Count - 1);
+                GameObject.Destroy(node);
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+        if (!IsBot)
+            OnUpdateBodyPart?.Invoke(_bodyPartList.Count - 1);
+        else
+        {
+            OnDie?.Invoke(partCount, partPosList);
+            GameObject.Destroy(this.gameObject);
+        }
+        IsDying = false;
     }
     #endregion
     
     #region SNAKE BOT
-    public void InitBot()
-    {
-        StartCoroutine(CRInitBot());
-    }
-    private IEnumerator CRInitBot()
-    {
-        int snakeBotLength = Random.Range(4, 8);
-        for (int i = 0; i < snakeBotLength; ++i)
-        {
-            yield return new WaitForSeconds(4);
-            SnakeNewPartBot();
-        }
-    }
     private void SnakeBotMove() 
     {
+        if (_bodyPartList.Count < 0) return;
         _bodyPartList[0].transform.position = Vector3.MoveTowards(_bodyPartList[0].transform.position, Player.transform.position, _speed * Time.fixedDeltaTime);
         _bodyPartList[0].transform.up = Player.position - _bodyPartList[0].transform.position;
         if (_bodyPartList.Count > 1)
@@ -104,12 +129,12 @@ public class SnakeManager : MonoBehaviour
             }
         }
     }
-    private void SnakeNewPartBot()
+    private void SnakeNewPartBot(Color color)
     {
         Node lastNode = _bodyPartList[_bodyPartList.Count - 1].GetComponent<Node>();
         GameObject newNode = Instantiate(_bodyPartPrefab, lastNode.NodePointList[0].Position, lastNode.NodePointList[0].Rotation, transform);
         newNode.GetComponent<Node>().ClearNodePointList();
-        newNode.GetComponent<SpriteRenderer>().color = ColorPool.Instance.ColorList[Random.Range(0, ColorPool.Instance.ColorList.Count)];
+        newNode.GetComponent<SpriteRenderer>().color = color;
         _bodyPartList.Add(newNode.GetComponent<Node>());
         newNode.tag = "Bot";
         //layer 9 is bot

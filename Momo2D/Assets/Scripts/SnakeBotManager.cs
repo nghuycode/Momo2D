@@ -6,15 +6,15 @@ public class SnakeBotManager : MonoBehaviour
 {
     public GameObject BotPrefab;
     public CameraFollow Cam;
+    public int MaxBot, SpawnBotDelayTime;
     private void Awake() 
     {
-        InvokeRepeating("SpawnBot", 1, 5);
+        InvokeRepeating("SpawnBot", 10, SpawnBotDelayTime);
     }
     public void SpawnBot()
     {
-        if (this.transform.childCount > 5) return;
+        if (this.transform.childCount >= MaxBot) return;
         GameObject newBot = Instantiate(BotPrefab, this.transform);
         newBot.transform.position = new Vector3(Random.Range(Cam.borderLeft, Cam.borderRight), Random.Range(Cam.borderBot, Cam.borderTop));
-        newBot.GetComponent<SnakeManager>().InitBot();
     }
 }

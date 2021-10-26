@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 public class DetectCollider : MonoBehaviour
 {
-    public UnityAction OnCollideWall, OnCollideBot;
+    public UnityAction OnCollideWall, OnCollideBot, OnCollidePlayer;
     public UnityAction<Color> OnCollideFood;
     private void OnCollisionEnter2D(Collision2D other) 
     {
@@ -17,6 +17,9 @@ public class DetectCollider : MonoBehaviour
             case "Bot":
                 CollideBot();
                 break;
+            case "Player":
+                CollidePlayer();
+                break;
         }
     }
     private void OnTriggerEnter2D(Collider2D other) 
@@ -25,6 +28,12 @@ public class DetectCollider : MonoBehaviour
         {
             case "Food":
                 CollideFood(other.gameObject);
+                break;
+            case "Bot":
+                CollideBot();
+                break;
+            case "Player":
+                CollidePlayer();
                 break;
         }
     }
@@ -43,5 +52,10 @@ public class DetectCollider : MonoBehaviour
     {
         Debug.Log("DIE");
         OnCollideBot?.Invoke();
+    }
+    private void CollidePlayer()
+    {
+        Debug.Log("KILL");
+        OnCollidePlayer?.Invoke();
     }
 }

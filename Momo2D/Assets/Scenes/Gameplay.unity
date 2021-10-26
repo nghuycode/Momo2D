@@ -219,6 +219,7 @@ MonoBehaviour:
   Cam: {fileID: 904615434}
   FoodPrefab: {fileID: 7673440394301690134, guid: 76bec029ffa2d8e40845e9a2dcb26f21,
     type: 3}
+  FoodSpawnDelayTime: 5
 --- !u!4 &362558034
 Transform:
   m_ObjectHideFlags: 0
@@ -703,6 +704,8 @@ MonoBehaviour:
   BotPrefab: {fileID: 6136745442234049379, guid: ab45f3ffdcfb5454bac701d2ab135ce0,
     type: 3}
   Cam: {fileID: 904615434}
+  MaxBot: 10
+  SpawnBotDelayTime: 3
 --- !u!1 &1075927226
 GameObject:
   m_ObjectHideFlags: 0
