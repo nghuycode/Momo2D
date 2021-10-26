@@ -9,11 +9,12 @@ public class GameManager : MonoBehaviour
     public UIManager UIManager;
     private void Awake() 
     {
-        LinkManagerEvents();
+        InitGame();
     }
     private void InitGame() 
     {
-
+        Cursor.lockState = CursorLockMode.Locked;
+        LinkManagerEvents();
     }
     private void LinkManagerEvents()
     {

@@ -93,6 +93,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Head Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 6343483486696709541, guid: f1e9c79fb084ee14b9fc81818351c223,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6343483486696709542, guid: f1e9c79fb084ee14b9fc81818351c223,
         type: 3}
       propertyPath: m_RootOrder
