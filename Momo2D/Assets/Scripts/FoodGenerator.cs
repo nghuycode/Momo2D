@@ -5,7 +5,7 @@ using UnityEngine;
 public class FoodGenerator : MonoBehaviour
 {
     public CameraFollow Cam;
-    public List<GameObject> FoodPrefabList;
+    public GameObject FoodPrefab;
 
     private void Awake() 
     {
@@ -13,7 +13,8 @@ public class FoodGenerator : MonoBehaviour
     }
     public void SpawnFood() 
     {
-        GameObject newFood = Instantiate(FoodPrefabList[Random.Range(0, FoodPrefabList.Count)], this.transform);
+        GameObject newFood = Instantiate(FoodPrefab, this.transform);
         newFood.transform.position = new Vector3(Random.Range(Cam.borderLeft, Cam.borderRight), Random.Range(Cam.borderBot, Cam.borderTop));
+        newFood.GetComponent<SpriteRenderer>().color = ColorPool.Instance.ColorList[Random.Range(0, ColorPool.Instance.ColorList.Count)];
     }
 }

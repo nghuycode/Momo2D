@@ -5,7 +5,8 @@ using UnityEngine.Events;
 
 public class DetectCollider : MonoBehaviour
 {
-    public UnityAction OnCollideFood, OnCollideWall;
+    public UnityAction OnCollideWall;
+    public UnityAction<Color> OnCollideFood;
     private void OnCollisionEnter2D(Collision2D other) 
     {
         switch (other.gameObject.tag)
@@ -22,7 +23,7 @@ public class DetectCollider : MonoBehaviour
     {
         GameObject.Destroy(food);
         Debug.Log("EAT");
-        OnCollideFood?.Invoke();
+        OnCollideFood?.Invoke(food.GetComponent<SpriteRenderer>().color);
     }
     private void CollideWall() 
     {

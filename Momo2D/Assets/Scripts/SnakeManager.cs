@@ -1,14 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class SnakeManager : MonoBehaviour
 {
     [SerializeField] private float _distanceBetweenNodes = 0.2f;
     [SerializeField] private float _speed = 280;
     [SerializeField] private float _turnSpeed = 180;
-    [SerializeField] private List<GameObject> _bodyPartPool = new List<GameObject>();
+    [SerializeField] private GameObject _bodyPartPrefab;
     [SerializeField] private List<Node> _bodyPartList = new List<Node>();
+
+    public UnityAction<int> OnNewPartCollect;
 
     private void Awake() 
     {
@@ -18,26 +21,21 @@ public class SnakeManager : MonoBehaviour
     private void Start() 
     {
         Cursor.lockState = CursorLockMode.Locked;
-        // InitHead();
-    }
-    private void InitHead()
-    {
-        GameObject head = Instantiate(_bodyPartPool[0], this.transform.position, this.transform.rotation, transform);
-        _bodyPartList.Add(head.GetComponent<Node>());
-        _bodyPartPool.RemoveAt(0);
-    }
-    private void Update() 
-    {
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            Debug.Log("Z");
-            SnakeNewPart();
-        }
     }
     private void FixedUpdate() 
     {
-        
         SnakeMove();
+    }
+    private void Update() 
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            _speed *= 2; 
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            _speed /= 2;
+        }
     }
     private void SnakeMove() 
     {
@@ -55,12 +53,15 @@ public class SnakeManager : MonoBehaviour
             }
         }
     }
-    private void SnakeNewPart() 
+    private void SnakeNewPart(Color color) 
     {
         Debug.Log("new");
         Node lastNode = _bodyPartList[_bodyPartList.Count - 1].GetComponent<Node>();
-        GameObject newNode = Instantiate(_bodyPartPool[Random.Range(0, _bodyPartPool.Count)], lastNode.NodePointList[0].Position, lastNode.NodePointList[0].Rotation, transform);
+        GameObject newNode = Instantiate(_bodyPartPrefab, lastNode.NodePointList[0].Position, lastNode.NodePointList[0].Rotation, transform);
         newNode.GetComponent<Node>().ClearNodePointList();
+        newNode.GetComponent<SpriteRenderer>().color = color;
         _bodyPartList.Add(newNode.GetComponent<Node>());
+
+        OnNewPartCollect?.Invoke(_bodyPartList.Count - 1);
     }
 }
