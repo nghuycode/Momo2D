@@ -10,10 +10,15 @@ public class SnakeManager : MonoBehaviour
     [SerializeField] private List<GameObject> _bodyPartPool = new List<GameObject>();
     [SerializeField] private List<Node> _bodyPartList = new List<Node>();
 
+    private void Awake() 
+    {
+        DetectCollider detectCollider = this.GetComponentInChildren<DetectCollider>();
+        detectCollider.OnCollideFood += SnakeNewPart;
+    }
     private void Start() 
     {
-        // Cursor.lockState = CursorLockMode.Confined;
-        InitHead();
+        Cursor.lockState = CursorLockMode.Locked;
+        // InitHead();
     }
     private void InitHead()
     {
