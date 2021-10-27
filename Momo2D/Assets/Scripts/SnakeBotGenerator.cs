@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SnakeBotManager : MonoBehaviour
+public class SnakeBotGenerator : MonoBehaviour
 {
     public GameObject BotPrefab;
     public CameraFollow Cam;

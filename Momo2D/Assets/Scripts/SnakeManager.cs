@@ -78,6 +78,7 @@ public class SnakeManager : MonoBehaviour
         newNode.tag = "Player";
         _bodyPartList.Add(newNode.GetComponent<Node>());
         OnUpdateBodyPart?.Invoke(_bodyPartList.Count - 1);
+        SoundManager.Instance.PlaySound("Eat");
     }
     private void Die()
     {
@@ -102,7 +103,10 @@ public class SnakeManager : MonoBehaviour
             }
         }
         if (!IsBot)
+        {
             OnUpdateBodyPart?.Invoke(_bodyPartList.Count - 1);
+            SoundManager.Instance.PlaySound("Die");
+        }
         else
         {
             OnDie?.Invoke(partCount, partPosList);
